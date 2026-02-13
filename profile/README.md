@@ -1,6 +1,6 @@
-# 👋 Welcome to Gogorichielab
+# 👋 Welcome to Gogorichie lab
 
-Gogorichie Lab is a collection of experiments, projects, and resources that reflect my journey through software engineering, DevOps, and cloud technologies.
+A collection of experiments, projects, and resources that reflect my journey through software engineering, DevOps, and cloud technologies.
 ---
 
 ## 🧪 What's Here
