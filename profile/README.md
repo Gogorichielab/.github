@@ -1,7 +1,6 @@
 # 👋 Welcome to Gogorichielab
 
-A collection of random projects, experiments, and ideas — built to explore, learn, and tinker.
-
+Gogorichie Lab is a collection of experiments, projects, and resources that reflect my journey through software engineering, DevOps, and cloud technologies.
 ---
 
 ## 🧪 What's Here
@@ -17,18 +16,6 @@ Most repos in this org follow a loose pattern:
 - **Experiments** — one-off ideas and quick builds to test a concept
 - **Projects** — more developed work with a clear goal
 - **WIP** — works in progress, may be rough around the edges
-
----
-
-## 🚀 Getting Started
-
-Each repository has its own README with setup instructions. Browse around, fork anything you find useful, and feel free to open an issue or PR if you want to contribute or leave feedback.
-
----
-
-## 📬 Contact
-
-Have a question or want to collaborate? Open an issue on any repo or reach out directly through GitHub.
 
 ---
 
