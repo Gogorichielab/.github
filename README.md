@@ -2,6 +2,12 @@
 
 This repository hosts organization-level Copilot agents and the public [organization profile](profile/README.md). Supported community health defaults can also be maintained here when added.
 
+## Workflow templates
+
+The [workflow template catalog and adoption guide](docs/workflow-templates.md) provides shared starters for Node CI, GitHub Pages, Azure Static Web Apps, Terraform validation, Checkov scanning, stale maintenance, and Dependabot auto-merge. See the [workflow inventory](docs/workflow-inventory.md) for the patterns and migration scope.
+
+Templates are copied into consuming repositories; changes here do not automatically update existing copies.
+
 ## Agent catalog
 
 | Agent | Use it for | Scope |

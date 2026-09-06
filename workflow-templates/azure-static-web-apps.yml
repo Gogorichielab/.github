@@ -1,0 +1,76 @@
+name: Azure Static Web Apps
+# Configure the paths, deployment token mapping, and environment protections before use.
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: swa-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+env:
+  SWA_APP_LOCATION: /
+  SWA_API_LOCATION: ''
+  SWA_OUTPUT_LOCATION: dist
+jobs:
+  deploy:
+    # Fork/Dependabot PRs must use secret-free CI; never switch to pull_request_target.
+    if: >-
+      (github.event_name != 'pull_request' &&
+       github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) ||
+      (github.event_name == 'pull_request' && github.event.action != 'closed' &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.user.login != 'dependabot[bot]' &&
+       vars.SWA_ENABLE_PREVIEWS == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          submodules: true
+      # Preserve existing prerequisites: Node/API builds, public build-time values, etc.
+      - name: Check deployment token
+        env:
+          SWA_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: test -n "$SWA_TOKEN"
+      - uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1
+        id: deployment
+        with:
+          action: upload
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          app_location: ${{ env.SWA_APP_LOCATION }}
+          api_location: ${{ env.SWA_API_LOCATION }}
+          output_location: ${{ env.SWA_OUTPUT_LOCATION }}
+          skip_app_build: false
+      # Retain preview smoke tests and production health checks after deployment.
+  close-preview:
+    if: >-
+      github.event_name == 'pull_request' && github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      vars.SWA_ENABLE_PREVIEWS == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: preview
+    steps:
+      # No checkout or execution of pull request code is needed for cleanup.
+      - name: Check deployment token
+        env:
+          SWA_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: test -n "$SWA_TOKEN"
+      - uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1
+        with:
+          action: close
+          app_location: ${{ env.SWA_APP_LOCATION }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}

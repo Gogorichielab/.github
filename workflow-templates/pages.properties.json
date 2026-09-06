@@ -1,0 +1,12 @@
+{
+  "name": "Gogorichielab — GitHub Pages",
+  "description": "Build/stage a public site and deploy only the default branch.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "deployment"
+  ],
+  "filePatterns": [
+    "^index\\.html$",
+    "^package\\.json$"
+  ]
+}
