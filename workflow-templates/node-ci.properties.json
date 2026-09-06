@@ -1,0 +1,12 @@
+{
+  "name": "Gogorichielab — Node CI",
+  "description": "npm install, lint, tests, and build with explicit repository customization.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "JavaScript",
+    "TypeScript"
+  ],
+  "filePatterns": [
+    "^package\\.json$"
+  ]
+}

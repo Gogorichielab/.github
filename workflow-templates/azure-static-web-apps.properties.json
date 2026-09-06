@@ -1,0 +1,8 @@
+{
+  "name": "Gogorichielab \u2014 Azure Static Web Apps",
+  "description": "Deploy production and opt-in trusted pull request previews with matching cleanup.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "deployment"
+  ]
+}

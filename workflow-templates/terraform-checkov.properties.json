@@ -1,0 +1,8 @@
+{
+  "name": "Gogorichielab — Terraform Checkov",
+  "description": "Scan Terraform and retain SARIF artifacts without cloud credentials.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "HCL"
+  ]
+}

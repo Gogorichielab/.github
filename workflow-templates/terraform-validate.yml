@@ -1,0 +1,42 @@
+name: Terraform validation
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: terraform-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  TF_IN_AUTOMATION: 'true'
+  TF_INPUT: 'false'
+  # Preserve the version required by the consuming repository.
+  TERRAFORM_VERSION: '1.9.8'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # REQUIRED: list actual root modules; add existing example/matrix setup steps.
+        directory: ['.']
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+      - run: terraform fmt -check -recursive -diff
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate -no-color
+      # Retain repository-specific terraform test and TFLint jobs.
+      # Cloud-authenticated plans/applies remain separate with their current gates.

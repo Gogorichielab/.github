@@ -1,0 +1,8 @@
+{
+  "name": "Gogorichielab — Stale maintenance",
+  "description": "Review a dry run, then enable the repository's approved stale-item policy.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "automation"
+  ]
+}

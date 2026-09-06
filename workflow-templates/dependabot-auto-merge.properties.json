@@ -1,0 +1,8 @@
+{
+  "name": "Gogorichielab — Dependabot auto-merge",
+  "description": "Opt-in minor/patch auto-merge behind existing required checks and reviews.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "automation"
+  ]
+}

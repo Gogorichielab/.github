@@ -1,0 +1,42 @@
+name: Stale maintenance
+on:
+  schedule:
+    - cron: '28 8 * * 2'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Report candidates without modifying issues or pull requests
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: stale-maintenance
+  cancel-in-progress: false
+jobs:
+  stale:
+    # Opt in only after reviewing a dry run and preserving the repository's policy.
+    if: github.event_name == 'workflow_dispatch' || vars.STALE_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          debug-only: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+          # Issue aging is off in the starter. Copy the existing approved thresholds.
+          days-before-issue-stale: -1
+          days-before-issue-close: -1
+          days-before-pr-stale: 30
+          days-before-pr-close: 7
+          stale-issue-label: no-issue-activity
+          stale-pr-label: no-pr-activity
+          stale-issue-message: 'This issue has had no recent activity. Please review whether it is still needed.'
+          stale-pr-message: 'This pull request has had no activity for 30 days. It will close in 7 days unless updated.'
+          exempt-issue-labels: 'pinned,security,keep-open'
+          exempt-pr-labels: 'pinned,security,keep-open'
+          operations-per-run: 30
+      # Branch deletion is intentionally separate: preserve its repository-specific policy.

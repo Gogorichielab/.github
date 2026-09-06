@@ -1,0 +1,8 @@
+{
+  "name": "Gogorichielab — Terraform validation",
+  "description": "Credential-free formatting and validation of configured root modules.",
+  "iconName": "octicon workflow",
+  "categories": [
+    "HCL"
+  ]
+}

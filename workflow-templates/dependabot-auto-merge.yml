@@ -1,0 +1,42 @@
+name: Dependabot auto-merge
+# Base-repository context is required for writes. NEVER checkout or run PR code here.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled]
+permissions:
+  contents: read
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+jobs:
+  auto-merge:
+    # Enable only after required checks/reviews and auto-merge are configured.
+    if: >-
+      vars.DEPENDABOT_AUTOMERGE_ENABLED == 'true' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'automerge')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
+        id: metadata
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable auto-merge for approved update classes
+        # Explicit allowlist: unknown/major versions and Terraform provider bumps stay manual.
+        if: >-
+          contains(fromJSON(vars.DEPENDABOT_AUTOMERGE_ECOSYSTEMS || '["github-actions"]'),
+                   steps.metadata.outputs.package-ecosystem) &&
+          (steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+           steps.metadata.outputs.update-type == 'version-update:semver-patch')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge --auto --squash --match-head-commit "$EXPECTED_HEAD" "$PR_URL"
+      # Does not approve reviews or bypass protections. Required checks must exist:
+      # --auto may merge immediately if all configured requirements are already satisfied.
